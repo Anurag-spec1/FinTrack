@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="18dp"
+    android:paddingEnd="18dp"
+    android:paddingTop="13dp"
+    android:paddingBottom="13dp">
+
+    <FrameLayout
+        android:id="@+id/txnIconCircle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/icon_bg_neutral">
+        <TextView
+            android:id="@+id/txnIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="🍔"
+            android:textSize="18sp"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/txnAmountBlock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/txnAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="- ₹340"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#F87171"
+            android:fontFamily="@font/dm_sans"/>
+
+        <TextView
+            android:id="@+id/txnDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today, 1:30 PM"
+            android:textSize="10sp"
+            android:textColor="#55FFFFFF"
+            android:fontFamily="@font/dm_sans"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/txnIconCircle"
+        android:layout_toStartOf="@id/txnAmountBlock"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:id="@+id/txnTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zomato Order"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#EEFFFFFF"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/dm_sans"/>
+
+        <TextView
+            android:id="@+id/txnCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Food"
+            android:textSize="11sp"
+            android:textColor="#66FFFFFF"
+            android:fontFamily="@font/dm_sans"/>
+    </LinearLayout>
+
+</RelativeLayout>
