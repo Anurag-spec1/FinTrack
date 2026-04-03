@@ -2,6 +2,7 @@ package com.hustlers.fintrack
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
+import com.hustlers.fintrack.activities.AddTransactionActivity
 import com.hustlers.fintrack.databinding.ActivityMainBinding
 import com.hustlers.fintrack.dataclass.NavItem
 import com.hustlers.fintrack.fragments.HomeFragment
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleAddAction() {
-
+    startActivity(Intent(this, AddTransactionActivity::class.java))
     }
 
     private fun selectTab(index: Int) {
