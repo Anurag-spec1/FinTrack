@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.hustlers.fintrack.databinding.ActivityMainBinding
 import com.hustlers.fintrack.dataclass.NavItem
 import com.hustlers.fintrack.fragments.HomeFragment
+import com.hustlers.fintrack.fragments.TransactionsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadFragmentForIndex(index: Int) {
         val fragment = when (index) {
             0 -> HomeFragment()
-//            1 -> TransactionsFragment()
+            1 -> TransactionsFragment()
 //            2 -> InsightsFragment()
 //            3 -> GoalsFragment()
             else -> HomeFragment()

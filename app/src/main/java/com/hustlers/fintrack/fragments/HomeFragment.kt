@@ -44,7 +44,6 @@ class HomeFragment : Fragment() {
 
 
     private fun bindData() {
-        // Greeting
         val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
         binding.tvGreeting.text = when {
             hour < 12 -> "Good morning,"
