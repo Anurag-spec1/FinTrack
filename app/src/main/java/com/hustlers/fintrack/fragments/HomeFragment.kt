@@ -3,29 +3,38 @@ package com.hustlers.fintrack.fragments
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.hustlers.fintrack.MainActivity
 import com.hustlers.fintrack.R
 import com.hustlers.fintrack.activities.AddTransactionActivity
+import com.hustlers.fintrack.activities.ProfileActivity
+import com.hustlers.fintrack.activities.SettingsActivity
 import com.hustlers.fintrack.databinding.FragmentHomeBinding
 import com.hustlers.fintrack.databinding.ItemTransactionBinding
 import com.hustlers.fintrack.dataclass.Transaction
 import com.hustlers.fintrack.storage.FinTrackPreferences
+import com.hustlers.fintrack.utils.CurrencyManager
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: FinTrackPreferences
+    private lateinit var currencyManager: CurrencyManager
+    private lateinit var ivProfilePhoto: ImageView
+    private lateinit var cardProfile: CardView
 
     private val categoryColors = listOf(
         0xFFF87171.toInt(),
@@ -43,11 +52,14 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         prefs = FinTrackPreferences.getInstance(requireContext())
+        currencyManager = CurrencyManager(requireContext())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ivProfilePhoto = binding.ivProfilePhoto
+        cardProfile = binding.cardProfile
         bindData()
         animateEntrance()
         setupClickListeners()
@@ -67,16 +79,18 @@ class HomeFragment : Fragment() {
         }
         binding.tvUserName.text = prefs.userName
 
-        binding.tvBalance.text         = formatRupee(prefs.balance)
-        binding.tvBalanceIncome.text   = formatRupee(prefs.totalIncome)
-        binding.tvBalanceExpenses.text = formatRupee(prefs.totalExpenses)
+        loadProfilePhoto()
 
-        binding.tvIncome.text   = formatRupee(prefs.totalIncome)
-        binding.tvExpenses.text = formatRupee(prefs.totalExpenses)
-        binding.tvSavings.text  = formatRupee(prefs.totalSavings)
+        binding.tvBalance.text         = formatAmount(prefs.balance)
+        binding.tvBalanceIncome.text   = formatAmount(prefs.totalIncome)
+        binding.tvBalanceExpenses.text = formatAmount(prefs.totalExpenses)
 
-        binding.tvGoalAmount.text    = formatRupee(prefs.totalSavings)
-        binding.tvMonthlyTarget.text = "of ${formatRupee(prefs.goalTarget)}"
+        binding.tvIncome.text   = formatAmount(prefs.totalIncome)
+        binding.tvExpenses.text = formatAmount(prefs.totalExpenses)
+        binding.tvSavings.text  = formatAmount(prefs.totalSavings)
+
+        binding.tvGoalAmount.text    = formatAmount(prefs.totalSavings)
+        binding.tvMonthlyTarget.text = "of ${formatAmount(prefs.goalTarget)}"
         binding.progressGoal.progress = prefs.goalProgress
 
         val transactionBindings = listOf(
@@ -97,6 +111,15 @@ class HomeFragment : Fragment() {
         loadSpendingByCategory()
     }
 
+    private fun loadProfilePhoto() {
+        val photoBitmap = prefs.getUserPhotoBitmap()
+        if (photoBitmap != null) {
+            ivProfilePhoto.setImageBitmap(photoBitmap)
+        } else {
+            ivProfilePhoto.setImageResource(R.mipmap.ic_launcher)
+        }
+    }
+
     private fun bindTransaction(txnBinding: ItemTransactionBinding, txn: Transaction) {
         txnBinding.txnIcon.text     = txn.icon
         txnBinding.txnTitle.text    = txn.title
@@ -104,10 +127,10 @@ class HomeFragment : Fragment() {
         txnBinding.txnDate.text     = txn.date
 
         if (txn.amount >= 0) {
-            txnBinding.txnAmount.text = "+ ${formatRupee(txn.amount)}"
+            txnBinding.txnAmount.text = "+ ${formatAmount(txn.amount)}"
             txnBinding.txnAmount.setTextColor(requireContext().getColor(android.R.color.holo_green_dark))
         } else {
-            txnBinding.txnAmount.text = "- ${formatRupee(-txn.amount)}"
+            txnBinding.txnAmount.text = "- ${formatAmount(-txn.amount)}"
             txnBinding.txnAmount.setTextColor(requireContext().getColor(android.R.color.holo_red_dark))
         }
     }
@@ -115,7 +138,6 @@ class HomeFragment : Fragment() {
     private fun loadSpendingByCategory() {
         val allTransactions = prefs.getTransactions()
 
-        val thirtyDaysAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
         val recentExpenses = allTransactions.filter { transaction ->
             transaction.amount < 0 && isWithinDays(transaction.date, 30)
         }
@@ -219,7 +241,7 @@ class HomeFragment : Fragment() {
         }
 
         val amountView = TextView(requireContext()).apply {
-            text = formatRupee(amount)
+            text = formatAmount(amount)
             textSize = 14f
             setTextColor(color)
             typeface = android.graphics.Typeface.DEFAULT_BOLD
@@ -354,7 +376,7 @@ class HomeFragment : Fragment() {
             interpolator = DecelerateInterpolator(2f)
             addUpdateListener {
                 if (isAdded) {
-                    tv.text = formatRupee((animatedValue as Float).toDouble())
+                    tv.text = formatAmount((animatedValue as Float).toDouble())
                 }
             }
             start()
@@ -366,10 +388,17 @@ class HomeFragment : Fragment() {
             startActivity(android.content.Intent(requireContext(), AddTransactionActivity::class.java))
         }
 
+        binding.settings.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), SettingsActivity::class.java))
+        }
+
+        cardProfile.setOnClickListener {
+            startActivity(Intent(requireContext(), ProfileActivity::class.java))
+        }
+
         binding.btnSeeAll.setOnClickListener {
             (activity as? MainActivity)?.let { mainActivity ->
                 mainActivity.selectTab(1)
-                // Force fragment load
                 when (1) {
                     0 -> mainActivity.supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainer, HomeFragment())
@@ -406,7 +435,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun formatRupee(amount: Double) = "₹${"%,.0f".format(amount)}"
+    private fun formatAmount(amount: Double): String {
+        return currencyManager.formatAmount(amount)
+    }
 
     private fun dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
 

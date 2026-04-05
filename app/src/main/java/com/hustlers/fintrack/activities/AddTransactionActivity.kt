@@ -5,22 +5,22 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import com.hustlers.fintrack.R
 import com.hustlers.fintrack.dataclass.Transaction
 import com.hustlers.fintrack.storage.FinTrackPreferences
+import com.hustlers.fintrack.utils.CurrencyManager
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTransactionActivity : AppCompatActivity() {
 
     private lateinit var prefs: FinTrackPreferences
+    private lateinit var currencyManager: CurrencyManager
 
     private lateinit var cardIncome: CardView
     private lateinit var cardExpense: CardView
     private lateinit var tvIncomeToggle: TextView
     private lateinit var tvExpenseToggle: TextView
-
 
     private lateinit var categoryContainer: LinearLayout
 
@@ -62,6 +62,7 @@ class AddTransactionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_transaction)
 
         prefs = FinTrackPreferences.getInstance(this)
+        currencyManager = CurrencyManager(this)
 
         bindViews()
         setupTypeToggle()
@@ -72,23 +73,25 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
-        cardIncome        = findViewById(R.id.cardIncomeToggle)
-        cardExpense       = findViewById(R.id.cardExpenseToggle)
-        tvIncomeToggle    = findViewById(R.id.tvIncomeToggle)
-        tvExpenseToggle   = findViewById(R.id.tvExpenseToggle)
+        cardIncome = findViewById(R.id.cardIncomeToggle)
+        cardExpense = findViewById(R.id.cardExpenseToggle)
+        tvIncomeToggle = findViewById(R.id.tvIncomeToggle)
+        tvExpenseToggle = findViewById(R.id.tvExpenseToggle)
         categoryContainer = findViewById(R.id.categoryContainer)
-        etTitle           = findViewById(R.id.etTitle)
-        etAmount          = findViewById(R.id.etAmount)
-        etNote            = findViewById(R.id.etNote)
-        btnBack           = findViewById(R.id.btnBack)
-        btnSave           = findViewById(R.id.btnSave)
-    }
+        etTitle = findViewById(R.id.etTitle)
+        etAmount = findViewById(R.id.etAmount)
+        etNote = findViewById(R.id.etNote)
+        btnBack = findViewById(R.id.btnBack)
+        btnSave = findViewById(R.id.btnSave)
 
+        // Show current currency symbol as hint
+        etAmount.hint = "${currencyManager.currentCurrency.symbol} 0"
+    }
 
     private fun setupTypeToggle() {
         selectExpense()
 
-        cardIncome.setOnClickListener  { selectIncome()  }
+        cardIncome.setOnClickListener { selectIncome() }
         cardExpense.setOnClickListener { selectExpense() }
     }
 
@@ -104,6 +107,7 @@ class AddTransactionActivity : AppCompatActivity() {
         setupCategoryChips(incomeCategories)
 
         etAmount.setHintTextColor(0x664ADE80.toInt())
+        etAmount.hint = "${currencyManager.currentCurrency.symbol} 0"
     }
 
     private fun selectExpense() {
@@ -118,8 +122,8 @@ class AddTransactionActivity : AppCompatActivity() {
         setupCategoryChips(expenseCategories)
 
         etAmount.setHintTextColor(0x66F87171.toInt())
+        etAmount.hint = "${currencyManager.currentCurrency.symbol} 0"
     }
-
 
     private fun setupCategoryChips(categories: List<Pair<String, String>>) {
         categoryContainer.removeAllViews()
@@ -169,7 +173,6 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun selectChip(chip: TextView, emoji: String, name: String) {
-
         for (i in 0 until categoryContainer.childCount) {
             val row = categoryContainer.getChildAt(i) as? LinearLayout ?: continue
             for (j in 0 until row.childCount) {
@@ -189,10 +192,9 @@ class AddTransactionActivity : AppCompatActivity() {
         selectedIcon = emoji
     }
 
-
     private fun setupSave() {
         btnSave.setOnClickListener {
-            val title  = etTitle.text.toString().trim()
+            val title = etTitle.text.toString().trim()
             val amtStr = etAmount.text.toString().trim()
 
             if (title.isEmpty()) {
@@ -221,14 +223,14 @@ class AddTransactionActivity : AppCompatActivity() {
             val finalAmount = if (isIncome) rawAmount else -rawAmount
             val dateStr = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault()).format(Date())
             val note = etNote.text.toString().trim()
-            val displayTitle = if (note.isNotEmpty()) title else title
+            val displayTitle = if (note.isNotEmpty()) "$title\n$note" else title
 
             val transaction = Transaction(
-                title    = displayTitle,
+                title = displayTitle,
                 category = selectedCategory,
-                amount   = finalAmount,
-                icon     = selectedIcon,
-                date     = dateStr
+                amount = finalAmount,
+                icon = selectedIcon,
+                date = dateStr
             )
 
             prefs.addTransaction(transaction)
@@ -238,6 +240,5 @@ class AddTransactionActivity : AppCompatActivity() {
         }
     }
 
-    private fun dpToPx(dp: Int): Int =
-        (dp * resources.displayMetrics.density).toInt()
+    private fun dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
 }

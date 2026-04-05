@@ -7,18 +7,23 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import com.hustlers.fintrack.activities.AddTransactionActivity
+import com.hustlers.fintrack.activities.LockActivity
+import com.hustlers.fintrack.activities.SettingsActivity
 import com.hustlers.fintrack.databinding.ActivityMainBinding
 import com.hustlers.fintrack.dataclass.NavItem
 import com.hustlers.fintrack.fragments.GoalsFragment
 import com.hustlers.fintrack.fragments.HomeFragment
 import com.hustlers.fintrack.fragments.InsightsFragment
 import com.hustlers.fintrack.fragments.TransactionsFragment
+import com.hustlers.fintrack.utils.BiometricLockManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,8 +31,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navItems: List<NavItem>
     private var selectedIndex = 0
 
+    companion object {
+        private var isUnlocked = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val fromUnlock = intent.getBooleanExtra("from_unlock", false)
+
+        if (fromUnlock) {
+            isUnlocked = true
+        }
+
+        val biometricManager = BiometricLockManager(this)
+
+        if (biometricManager.isBiometricEnabled() && !isUnlocked && !fromUnlock) {
+            startActivity(Intent(this, LockActivity::class.java))
+            finish()
+            return
+        }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = Color.TRANSPARENT
@@ -41,6 +64,23 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             loadFragment(HomeFragment(), 0)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Handler(Looper.getMainLooper()).postDelayed({
+            val biometricManager = BiometricLockManager(this)
+            if (biometricManager.isBiometricEnabled() && !isUnlocked) {
+                isUnlocked = false
+                startActivity(Intent(this, LockActivity::class.java))
+                finish()
+            }
+        }, 100)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isUnlocked = false
     }
 
     private fun setupNavBar() {
@@ -88,7 +128,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleAddAction() {
-    startActivity(Intent(this, AddTransactionActivity::class.java))
+        startActivity(Intent(this, AddTransactionActivity::class.java))
     }
 
     fun selectTab(index: Int) {

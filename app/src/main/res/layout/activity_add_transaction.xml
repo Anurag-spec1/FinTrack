@@ -40,7 +40,7 @@
                 android:fontFamily="@font/dm_sans"
                 android:text="Add Transaction"
                 android:textColor="@color/white"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
         </RelativeLayout>

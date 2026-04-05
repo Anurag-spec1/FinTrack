@@ -7,10 +7,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hustlers.fintrack.R
 import com.hustlers.fintrack.dataclass.Transaction
+import com.hustlers.fintrack.utils.CurrencyManager
 
 class TransactionListAdapter(
     private val items: MutableList<Transaction>,
-    private val formatRupee: (Double) -> String
+    private val currencyManager: CurrencyManager
 ) : RecyclerView.Adapter<TransactionListAdapter.TxnViewHolder>() {
 
     inner class TxnViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -50,14 +51,14 @@ class TransactionListAdapter(
             .start()
 
         if (txn.amount >= 0) {
-            holder.amount.text = "+ ${formatRupee(txn.amount)}"
+            holder.amount.text = "+ ${formatAmount(txn.amount)}"
             holder.amount.setTextColor(0xFF4ADE80.toInt())
             holder.badge.text = "INCOME"
             holder.badge.setBackgroundResource(R.drawable.badge_income_bg)
             holder.badge.setTextColor(0xFF4ADE80.toInt())
             holder.icon.setBackgroundResource(R.drawable.icon_bg_green)
         } else {
-            holder.amount.text = "- ${formatRupee(-txn.amount)}"
+            holder.amount.text = "- ${formatAmount(-txn.amount)}"
             holder.amount.setTextColor(0xFFF87171.toInt())
             holder.badge.text = "EXPENSE"
             holder.badge.setBackgroundResource(R.drawable.badge_expense_bg)
@@ -80,5 +81,9 @@ class TransactionListAdapter(
         items.clear()
         items.addAll(list)
         notifyDataSetChanged()
+    }
+
+    private fun formatAmount(amount: Double): String {
+        return currencyManager.formatAmount(amount)
     }
 }

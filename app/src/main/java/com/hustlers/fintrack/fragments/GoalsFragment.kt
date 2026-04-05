@@ -1,6 +1,9 @@
 package com.hustlers.fintrack.fragments
 
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -10,11 +13,13 @@ import com.hustlers.fintrack.R
 import com.hustlers.fintrack.dataclass.Goal
 import com.hustlers.fintrack.storage.FinTrackPreferences
 import com.hustlers.fintrack.storage.GoalPreferences
+import com.hustlers.fintrack.utils.CurrencyManager
 
 class GoalsFragment : Fragment() {
 
     private lateinit var prefs: FinTrackPreferences
     private lateinit var goalPrefs: GoalPreferences
+    private lateinit var currencyManager: CurrencyManager
 
     private lateinit var tvTotalGoals: TextView
     private lateinit var tvCompletedGoals: TextView
@@ -32,25 +37,25 @@ class GoalsFragment : Fragment() {
     private lateinit var btnAddGoal: CardView
 
     private val goalColors = listOf(
-        0xFF60A5FA.toInt(),   // blue
-        0xFF4ADE80.toInt(),   // green
-        0xFFFBBF24.toInt(),   // yellow
-        0xFFA78BFA.toInt(),   // purple
-        0xFFF87171.toInt(),   // red
-        0xFF34D399.toInt(),   // teal
-        0xFFFB923C.toInt(),   // orange
-        0xFFE879F9.toInt()    // pink
+        0xFF60A5FA.toInt(),
+        0xFF4ADE80.toInt(),
+        0xFFFBBF24.toInt(),
+        0xFFA78BFA.toInt(),
+        0xFFF87171.toInt(),
+        0xFF34D399.toInt(),
+        0xFFFB923C.toInt(),
+        0xFFE879F9.toInt()
     )
 
     private val goalEmojis = listOf("🎯","🏠","✈️","🚗","📱","💻","👨‍🎓","💍","🏋️","🎮","📚","🏖️")
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val root = inflater.inflate(R.layout.fragment_goals, container, false)
-        prefs     = FinTrackPreferences.getInstance(requireContext())
+        prefs = FinTrackPreferences.getInstance(requireContext())
         goalPrefs = GoalPreferences.getInstance(requireContext())
+        currencyManager = CurrencyManager(requireContext())
         bindViews(root)
         return root
     }
@@ -66,28 +71,25 @@ class GoalsFragment : Fragment() {
         loadAll()
     }
 
-
     private fun bindViews(root: View) {
-        tvTotalGoals       = root.findViewById(R.id.tvTotalGoals)
-        tvCompletedGoals   = root.findViewById(R.id.tvCompletedGoals)
-        tvTotalSaved       = root.findViewById(R.id.tvTotalSaved)
-        tvMonthlySavings   = root.findViewById(R.id.tvMonthlySavings)
-        tvMonthlyTarget    = root.findViewById(R.id.tvMonthlyTarget)
-        progressMonthly    = root.findViewById(R.id.progressMonthly)
-        tvMonthlyPct       = root.findViewById(R.id.tvMonthlyPct)
+        tvTotalGoals = root.findViewById(R.id.tvTotalGoals)
+        tvCompletedGoals = root.findViewById(R.id.tvCompletedGoals)
+        tvTotalSaved = root.findViewById(R.id.tvTotalSaved)
+        tvMonthlySavings = root.findViewById(R.id.tvMonthlySavings)
+        tvMonthlyTarget = root.findViewById(R.id.tvMonthlyTarget)
+        progressMonthly = root.findViewById(R.id.progressMonthly)
+        tvMonthlyPct = root.findViewById(R.id.tvMonthlyPct)
         tvMonthlyRemaining = root.findViewById(R.id.tvMonthlyRemaining)
         btnEditMonthlyGoal = root.findViewById(R.id.btnEditMonthlyGoal)
-        goalsContainer     = root.findViewById(R.id.goalsContainer)
-        layoutEmptyGoals   = root.findViewById(R.id.layoutEmptyGoals)
-        btnAddGoal         = root.findViewById(R.id.btnAddGoal)
+        goalsContainer = root.findViewById(R.id.goalsContainer)
+        layoutEmptyGoals = root.findViewById(R.id.layoutEmptyGoals)
+        btnAddGoal = root.findViewById(R.id.btnAddGoal)
     }
-
 
     private fun setupClickListeners() {
         btnAddGoal.setOnClickListener { showAddGoalDialog() }
         btnEditMonthlyGoal.setOnClickListener { showEditMonthlyGoalDialog() }
     }
-
 
     private fun loadAll() {
         loadMonthlySavingsGoal()
@@ -95,33 +97,30 @@ class GoalsFragment : Fragment() {
         loadSummaryHeader()
     }
 
-
     private fun loadMonthlySavingsGoal() {
-        val saved   = prefs.totalSavings
-        val target  = prefs.goalTarget
-        val pct     = if (target > 0) ((saved / target) * 100).toInt().coerceIn(0, 100) else 0
+        val saved = prefs.totalSavings
+        val target = prefs.goalTarget
+        val pct = if (target > 0) ((saved / target) * 100).toInt().coerceIn(0, 100) else 0
         val remaining = (target - saved).coerceAtLeast(0.0)
 
-        tvMonthlySavings.text   = formatRupee(saved.coerceAtLeast(0.0))
-        tvMonthlyTarget.text    = "of ${formatRupee(target)}"
+        tvMonthlySavings.text = formatAmount(saved.coerceAtLeast(0.0))
+        tvMonthlyTarget.text = "of ${formatAmount(target)}"
         progressMonthly.progress = pct
-        tvMonthlyPct.text       = "$pct%"
+        tvMonthlyPct.text = "$pct%"
         tvMonthlyRemaining.text = if (remaining > 0)
-            "${formatRupee(remaining)} to go"
+            "${formatAmount(remaining)} to go"
         else
             "🎉 Goal achieved!"
 
         val color = when {
             pct >= 100 -> 0xFF4ADE80.toInt()
-            pct >= 60  -> 0xFF60A5FA.toInt()
-            pct >= 30  -> 0xFFFBBF24.toInt()
-            else       -> 0xFFF87171.toInt()
+            pct >= 60 -> 0xFF60A5FA.toInt()
+            pct >= 30 -> 0xFFFBBF24.toInt()
+            else -> 0xFFF87171.toInt()
         }
-        progressMonthly.progressTintList =
-            android.content.res.ColorStateList.valueOf(color)
+        progressMonthly.progressTintList = android.content.res.ColorStateList.valueOf(color)
         tvMonthlyPct.setTextColor(color)
     }
-
 
     private fun loadCustomGoals() {
         goalsContainer.removeAllViews()
@@ -129,22 +128,22 @@ class GoalsFragment : Fragment() {
 
         if (goals.isEmpty()) {
             layoutEmptyGoals.visibility = View.VISIBLE
-            goalsContainer.visibility   = View.GONE
+            goalsContainer.visibility = View.GONE
             return
         }
 
         layoutEmptyGoals.visibility = View.GONE
-        goalsContainer.visibility   = View.VISIBLE
+        goalsContainer.visibility = View.VISIBLE
 
         goals.forEachIndexed { index, goal ->
             val color = goalColors[index % goalColors.size]
-            val card  = buildGoalCard(goal, color, index)
+            val card = buildGoalCard(goal, color, index)
             goalsContainer.addView(card)
         }
     }
 
     private fun buildGoalCard(goal: Goal, color: Int, index: Int): View {
-        val pct       = if (goal.target > 0) ((goal.saved / goal.target) * 100).toInt().coerceIn(0, 100) else 0
+        val pct = if (goal.target > 0) ((goal.saved / goal.target) * 100).toInt().coerceIn(0, 100) else 0
         val remaining = (goal.target - goal.saved).coerceAtLeast(0.0)
         val isComplete = pct >= 100
 
@@ -172,9 +171,9 @@ class GoalsFragment : Fragment() {
         }
 
         val tvEmoji = TextView(requireContext()).apply {
-            text  = goal.emoji
+            text = goal.emoji
             textSize = 18f
-            gravity = android.view.Gravity.CENTER
+            gravity = Gravity.CENTER
             id = View.generateViewId()
             background = buildCircleBg(color, 30)
         }
@@ -198,20 +197,20 @@ class GoalsFragment : Fragment() {
         val tvTitle = TextView(requireContext()).apply {
             text = goal.title
             textSize = 14f
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
-            setTextColor(0xFFFFFFFF.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
         }
         val tvSub = TextView(requireContext()).apply {
-            text = if (isComplete) "🎉 Completed!" else "${formatRupee(goal.saved)} of ${formatRupee(goal.target)}"
+            text = if (isComplete) "🎉 Completed!" else "${formatAmount(goal.saved)} of ${formatAmount(goal.target)}"
             textSize = 11f
-            setTextColor(if (isComplete) 0xFF4ADE80.toInt() else 0x99FFFFFF.toInt())
+            setTextColor(if (isComplete) 0xFF4ADE80.toInt() else Color.parseColor("#99FFFFFF"))
         }
         infoBlock.addView(tvTitle)
         infoBlock.addView(tvSub)
 
         val actionsLayout = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
-            gravity = android.view.Gravity.CENTER_VERTICAL
+            gravity = Gravity.CENTER_VERTICAL
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
@@ -225,14 +224,14 @@ class GoalsFragment : Fragment() {
             text = "＋"
             textSize = 18f
             setTextColor(color)
-            setPadding(dpToPx(8), dpToPx(4), dpToPx(4), dpToPx(4))
+            setPadding(dpToPx(12), dpToPx(8), dpToPx(12), dpToPx(8))
             setOnClickListener { showAddMoneyDialog(goal) }
         }
 
         val btnDelete = TextView(requireContext()).apply {
             text = "🗑"
             textSize = 15f
-            setPadding(dpToPx(4), dpToPx(4), 0, dpToPx(4))
+            setPadding(dpToPx(12), dpToPx(8), dpToPx(8), dpToPx(8))
             setOnClickListener { showDeleteGoalDialog(goal) }
         }
 
@@ -267,12 +266,12 @@ class GoalsFragment : Fragment() {
         val tvPct = TextView(requireContext()).apply {
             text = "$pct%"
             textSize = 11f
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            typeface = Typeface.DEFAULT_BOLD
             setTextColor(if (isComplete) 0xFF4ADE80.toInt() else color)
         }
 
         val tvRemaining = TextView(requireContext()).apply {
-            text = if (isComplete) "Done ✓" else "${formatRupee(remaining)} remaining"
+            text = if (isComplete) "Done ✓" else "${formatAmount(remaining)} remaining"
             textSize = 11f
             setTextColor(0x66FFFFFF)
             layoutParams = RelativeLayout.LayoutParams(
@@ -292,37 +291,37 @@ class GoalsFragment : Fragment() {
     }
 
     private fun loadSummaryHeader() {
-        val goals     = goalPrefs.getGoals()
+        val goals = goalPrefs.getGoals()
         val completed = goals.count { it.saved >= it.target }
         val totalSaved = goals.sumOf { it.saved }
 
-        tvTotalGoals.text     = "${goals.size}"
+        tvTotalGoals.text = "${goals.size}"
         tvCompletedGoals.text = "$completed done"
-        tvTotalSaved.text     = formatRupee(totalSaved)
+        tvTotalSaved.text = formatAmount(totalSaved)
     }
-
 
     private fun showAddGoalDialog() {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_add_goal, null)
 
-        val etTitle   = dialogView.findViewById<EditText>(R.id.etGoalTitle)
-        val etTarget  = dialogView.findViewById<EditText>(R.id.etGoalTarget)
+        val etTitle = dialogView.findViewById<EditText>(R.id.etGoalTitle)
+        val etTarget = dialogView.findViewById<EditText>(R.id.etGoalTarget)
         val emojiGrid = dialogView.findViewById<GridLayout>(R.id.emojiGrid)
 
         var selectedEmoji = goalEmojis[0]
 
+        emojiGrid.columnCount = 4
+
         goalEmojis.forEachIndexed { i, emoji ->
             val tv = TextView(requireContext()).apply {
-                text     = emoji
-                textSize = 22f
-                gravity  = android.view.Gravity.CENTER
-                val size = dpToPx(44)
+                text = emoji
+                textSize = 24f
+                gravity = Gravity.CENTER
+                val size = dpToPx(56)
                 layoutParams = GridLayout.LayoutParams().also {
-                    it.width       = size
-                    it.height      = size
-                    it.rightMargin = dpToPx(8)
-                    it.bottomMargin = dpToPx(8)
+                    it.width = size
+                    it.height = size
+                    it.setMargins(dpToPx(6), dpToPx(6), dpToPx(6), dpToPx(6))
                 }
                 setBackgroundResource(R.drawable.chip_unselected_bg)
                 if (i == 0) setBackgroundResource(R.drawable.chip_selected_blue_bg)
@@ -339,54 +338,78 @@ class GoalsFragment : Fragment() {
             emojiGrid.addView(tv)
         }
 
-        AlertDialog.Builder(requireContext(), R.style.DarkDialogTheme)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.DarkDialogTheme)
+            .setTitle("Create New Goal")
             .setView(dialogView)
-            .setPositiveButton("Create Goal") { _, _ ->
-                val title  = etTitle.text.toString().trim()
+            .setPositiveButton("Create Goal", null)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setOnClickListener {
+                val title = etTitle.text.toString().trim()
                 val target = etTarget.text.toString().toDoubleOrNull()
 
                 if (title.isEmpty()) {
-                    Toast.makeText(requireContext(), "Enter a goal title", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
+                    etTitle.error = "Enter a goal title"
+                    etTitle.requestFocus()
+                    return@setOnClickListener
                 }
                 if (target == null || target <= 0) {
-                    Toast.makeText(requireContext(), "Enter a valid target amount", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
+                    etTarget.error = "Enter a valid target amount"
+                    etTarget.requestFocus()
+                    return@setOnClickListener
                 }
 
                 val goal = Goal(
-                    id     = System.currentTimeMillis().toString(),
-                    title  = title,
+                    id = System.currentTimeMillis().toString(),
+                    title = title,
                     target = target,
-                    saved  = 0.0,
-                    emoji  = selectedEmoji
+                    saved = 0.0,
+                    emoji = selectedEmoji
                 )
                 goalPrefs.addGoal(goal)
                 loadAll()
                 Toast.makeText(requireContext(), "Goal created! 🎯", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
+
+        dialog.show()
+
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.9).toInt(),
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun showAddMoneyDialog(goal: Goal) {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_add_money, null)
 
-        val etAmount  = dialogView.findViewById<EditText>(R.id.etAddAmount)
+        val etAmount = dialogView.findViewById<EditText>(R.id.etAddAmount)
         val tvGoalName = dialogView.findViewById<TextView>(R.id.tvGoalName)
         val tvCurrentProgress = dialogView.findViewById<TextView>(R.id.tvCurrentProgress)
 
         tvGoalName.text = "${goal.emoji} ${goal.title}"
-        tvCurrentProgress.text = "${formatRupee(goal.saved)} saved of ${formatRupee(goal.target)}"
+        tvCurrentProgress.text = "${formatAmount(goal.saved)} saved of ${formatAmount(goal.target)}"
 
-        AlertDialog.Builder(requireContext(), R.style.DarkDialogTheme)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.DarkDialogTheme)
+            .setTitle("Add Money to Goal")
             .setView(dialogView)
-            .setPositiveButton("Add Money") { _, _ ->
+            .setPositiveButton("Add Money", null)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setOnClickListener {
                 val amount = etAmount.text.toString().toDoubleOrNull()
                 if (amount == null || amount <= 0) {
-                    Toast.makeText(requireContext(), "Enter a valid amount", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
+                    etAmount.error = "Enter a valid amount"
+                    etAmount.requestFocus()
+                    return@setOnClickListener
                 }
 
                 goalPrefs.addMoneyToGoal(goal.id, amount)
@@ -396,11 +419,18 @@ class GoalsFragment : Fragment() {
                 val newPct = if (updated != null && updated.target > 0)
                     ((updated.saved / updated.target) * 100).toInt() else 0
 
-                val msg = if (newPct >= 100) "🎉 Goal achieved!" else "Added ${formatRupee(amount)} to ${goal.title}!"
+                val msg = if (newPct >= 100) "🎉 Goal achieved!" else "Added ${formatAmount(amount)} to ${goal.title}!"
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
+
+        dialog.show()
+
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun showDeleteGoalDialog(goal: Goal) {
@@ -424,32 +454,50 @@ class GoalsFragment : Fragment() {
         etTarget.setText(prefs.goalTarget.toInt().toString())
         etTarget.setSelection(etTarget.text.length)
 
-        AlertDialog.Builder(requireContext(), R.style.DarkDialogTheme)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.DarkDialogTheme)
+            .setTitle("Edit Monthly Savings Goal")
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton("Save", null)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setOnClickListener {
                 val target = etTarget.text.toString().toDoubleOrNull()
                 if (target == null || target <= 0) {
-                    Toast.makeText(requireContext(), "Enter a valid amount", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
+                    etTarget.error = "Enter a valid amount"
+                    etTarget.requestFocus()
+                    return@setOnClickListener
                 }
                 prefs.goalTarget = target
                 loadAll()
                 Toast.makeText(requireContext(), "Monthly goal updated!", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
+
+        dialog.show()
+
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
     }
 
-    private fun buildCircleBg(color: Int, alpha: Int = 40): android.graphics.drawable.GradientDrawable {
-        return android.graphics.drawable.GradientDrawable().apply {
-            shape = android.graphics.drawable.GradientDrawable.OVAL
+    private fun buildCircleBg(color: Int, alpha: Int = 40): GradientDrawable {
+        return GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
             val r = (color shr 16) and 0xFF
             val g = (color shr 8) and 0xFF
             val b = color and 0xFF
-            setColor(android.graphics.Color.argb(alpha, r, g, b))
+            setColor(Color.argb(alpha, r, g, b))
         }
     }
 
-    private fun formatRupee(amount: Double) = "₹${"%,.0f".format(amount)}"
+    private fun formatAmount(amount: Double): String {
+        return currencyManager.formatAmount(amount)
+    }
+
     private fun dpToPx(dp: Int) = (dp * resources.displayMetrics.density).toInt()
 }

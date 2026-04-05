@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,10 +16,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinTrack">
         <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.LockActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/Theme.FinTrack" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CurrencySettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AddTransactionActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

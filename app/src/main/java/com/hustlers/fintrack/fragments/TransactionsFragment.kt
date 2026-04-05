@@ -8,10 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,10 +20,12 @@ import com.hustlers.fintrack.R
 import com.hustlers.fintrack.adapter.TransactionListAdapter
 import com.hustlers.fintrack.dataclass.Transaction
 import com.hustlers.fintrack.storage.FinTrackPreferences
+import com.hustlers.fintrack.utils.CurrencyManager
 
 class TransactionsFragment : Fragment() {
 
     private lateinit var prefs: FinTrackPreferences
+    private lateinit var currencyManager: CurrencyManager
 
     private lateinit var etSearch: EditText
     private lateinit var btnClearSearch: ImageView
@@ -51,12 +50,12 @@ class TransactionsFragment : Fragment() {
 
     enum class Filter { ALL, INCOME, EXPENSE }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val root = inflater.inflate(R.layout.fragment_transactions, container, false)
         prefs = FinTrackPreferences.getInstance(requireContext())
+        currencyManager = CurrencyManager(requireContext())
         bindViews(root)
         return root
     }
@@ -75,24 +74,24 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun bindViews(root: View) {
-        etSearch           = root.findViewById(R.id.etSearch)
-        btnClearSearch     = root.findViewById(R.id.btnClearSearch)
-        chipGroup          = root.findViewById(R.id.chipGroup)
-        chipAll            = root.findViewById(R.id.chipAll)
-        chipIncome         = root.findViewById(R.id.chipIncome)
-        chipExpense        = root.findViewById(R.id.chipExpense)
-        rvTransactions     = root.findViewById(R.id.rvTransactions)
-        tvEmpty            = root.findViewById(R.id.tvEmpty)
-        tvEmptySubtitle    = root.findViewById(R.id.tvEmptySubtitle)
-        layoutEmpty        = root.findViewById(R.id.layoutEmpty)
-        tvTotalIncome      = root.findViewById(R.id.tvTotalIncome)
-        tvTotalExpenses    = root.findViewById(R.id.tvTotalExpenses)
-        tvTotalSavings     = root.findViewById(R.id.tvTotalSavings)
+        etSearch = root.findViewById(R.id.etSearch)
+        btnClearSearch = root.findViewById(R.id.btnClearSearch)
+        chipGroup = root.findViewById(R.id.chipGroup)
+        chipAll = root.findViewById(R.id.chipAll)
+        chipIncome = root.findViewById(R.id.chipIncome)
+        chipExpense = root.findViewById(R.id.chipExpense)
+        rvTransactions = root.findViewById(R.id.rvTransactions)
+        tvEmpty = root.findViewById(R.id.tvEmpty)
+        tvEmptySubtitle = root.findViewById(R.id.tvEmptySubtitle)
+        layoutEmpty = root.findViewById(R.id.layoutEmpty)
+        tvTotalIncome = root.findViewById(R.id.tvTotalIncome)
+        tvTotalExpenses = root.findViewById(R.id.tvTotalExpenses)
+        tvTotalSavings = root.findViewById(R.id.tvTotalSavings)
         tvTransactionCount = root.findViewById(R.id.tvTransactionCount)
     }
 
     private fun setupRecyclerView() {
-        adapter = TransactionListAdapter(mutableListOf(), ::formatRupee)
+        adapter = TransactionListAdapter(mutableListOf(), currencyManager)
         rvTransactions.layoutManager = LinearLayoutManager(requireContext())
         rvTransactions.adapter = adapter
 
@@ -139,8 +138,8 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun setupChips() {
-        chipAll.setOnClickListener     { currentFilter = Filter.ALL;     applyFilters() }
-        chipIncome.setOnClickListener  { currentFilter = Filter.INCOME;  applyFilters() }
+        chipAll.setOnClickListener { currentFilter = Filter.ALL; applyFilters() }
+        chipIncome.setOnClickListener { currentFilter = Filter.INCOME; applyFilters() }
         chipExpense.setOnClickListener { currentFilter = Filter.EXPENSE; applyFilters() }
     }
 
@@ -154,8 +153,8 @@ class TransactionsFragment : Fragment() {
         var result = allTransactions
 
         result = when (currentFilter) {
-            Filter.ALL     -> result
-            Filter.INCOME  -> result.filter { it.amount >= 0 }
+            Filter.ALL -> result
+            Filter.INCOME -> result.filter { it.amount >= 0 }
             Filter.EXPENSE -> result.filter { it.amount < 0 }
         }
 
@@ -173,24 +172,26 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun updateSummaryCards() {
-        val income   = allTransactions.filter { it.amount >= 0 }.sumOf { it.amount }
+        val income = allTransactions.filter { it.amount >= 0 }.sumOf { it.amount }
         val expenses = allTransactions.filter { it.amount < 0 }.sumOf { -it.amount }
-        tvTotalIncome.text   = formatRupee(income)
-        tvTotalExpenses.text = formatRupee(expenses)
-        tvTotalSavings.text  = formatRupee(income - expenses)
+        tvTotalIncome.text = formatAmount(income)
+        tvTotalExpenses.text = formatAmount(expenses)
+        tvTotalSavings.text = formatAmount(income - expenses)
     }
 
     private fun checkEmptyState() {
         if (adapter.itemCount == 0) {
-            layoutEmpty.visibility    = View.VISIBLE
+            layoutEmpty.visibility = View.VISIBLE
             rvTransactions.visibility = View.GONE
-            tvEmpty.text         = if (currentSearch.isNotEmpty()) "No results found" else "No transactions yet"
+            tvEmpty.text = if (currentSearch.isNotEmpty()) "No results found" else "No transactions yet"
             tvEmptySubtitle.text = if (currentSearch.isNotEmpty()) "Try a different search term" else "Tap + to add your first transaction"
         } else {
-            layoutEmpty.visibility    = View.GONE
+            layoutEmpty.visibility = View.GONE
             rvTransactions.visibility = View.VISIBLE
         }
     }
 
-    private fun formatRupee(amount: Double) = "₹${"%,.0f".format(amount)}"
+    private fun formatAmount(amount: Double): String {
+        return currencyManager.formatAmount(amount)
+    }
 }

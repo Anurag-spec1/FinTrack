@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:queryHint">Search currencies...</item>
+        <item name="android:iconifiedByDefault">false</item>
+        <item name="android:queryBackground">@android:color/transparent</item>
+        <item name="android:searchIcon">@null</item>
+    </style>
+</resources>

@@ -1,22 +1,22 @@
 package com.hustlers.fintrack.fragments
 
-import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.hustlers.fintrack.R
 import com.hustlers.fintrack.dataclass.Transaction
 import com.hustlers.fintrack.storage.FinTrackPreferences
+import com.hustlers.fintrack.utils.CurrencyManager
 import com.hustlers.fintrack.views.BarChartView
 import com.hustlers.fintrack.views.DonutChartView
 
 class InsightsFragment : Fragment() {
 
     private lateinit var prefs: FinTrackPreferences
+    private lateinit var currencyManager: CurrencyManager
 
     private lateinit var tvTotalIncome: TextView
     private lateinit var tvTotalExpenses: TextView
@@ -43,14 +43,14 @@ class InsightsFragment : Fragment() {
     enum class Period { WEEK, MONTH, ALL }
 
     private val categoryColors = listOf(
-        0xFFF87171.toInt(),   // red
-        0xFF4ADE80.toInt(),   // green
-        0xFF60A5FA.toInt(),   // blue
-        0xFFFBBF24.toInt(),   // yellow
-        0xFFA78BFA.toInt(),   // purple
-        0xFF34D399.toInt(),   // teal
-        0xFFFB923C.toInt(),   // orange
-        0xFFE879F9.toInt()    // pink
+        0xFFF87171.toInt(),
+        0xFF4ADE80.toInt(),
+        0xFF60A5FA.toInt(),
+        0xFFFBBF24.toInt(),
+        0xFFA78BFA.toInt(),
+        0xFF34D399.toInt(),
+        0xFFFB923C.toInt(),
+        0xFFE879F9.toInt()
     )
 
     override fun onCreateView(
@@ -58,6 +58,7 @@ class InsightsFragment : Fragment() {
     ): View {
         val root = inflater.inflate(R.layout.fragment_insights, container, false)
         prefs = FinTrackPreferences.getInstance(requireContext())
+        currencyManager = CurrencyManager(requireContext())
         bindViews(root)
         return root
     }
@@ -116,7 +117,6 @@ class InsightsFragment : Fragment() {
     }
 
     private fun applyPeriodFilter() {
-        val now = System.currentTimeMillis()
         filteredTransactions = when (currentPeriod) {
             Period.WEEK -> allTransactions.filter { isWithinDays(it.date, 7) }
             Period.MONTH -> allTransactions.filter { isWithinDays(it.date, 30) }
@@ -128,7 +128,7 @@ class InsightsFragment : Fragment() {
     private fun isWithinDays(dateStr: String, days: Int): Boolean {
         return try {
             val sdfWithYear = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault())
-            val sdfOld      = java.text.SimpleDateFormat("dd MMM, hh:mm a", java.util.Locale.getDefault())
+            val sdfOld = java.text.SimpleDateFormat("dd MMM, hh:mm a", java.util.Locale.getDefault())
 
             val date = try {
                 sdfWithYear.parse(dateStr)
@@ -157,9 +157,9 @@ class InsightsFragment : Fragment() {
         val savings = income - expenses
         val rate = if (income > 0) ((savings / income) * 100).toInt() else 0
 
-        tvTotalIncome.text = formatRupee(income)
-        tvTotalExpenses.text = formatRupee(expenses)
-        tvNetSavings.text = formatRupee(savings)
+        tvTotalIncome.text = formatAmount(income)
+        tvTotalExpenses.text = formatAmount(expenses)
+        tvNetSavings.text = formatAmount(savings)
         tvSavingsRate.text = "$rate%"
         tvNetSavings.setTextColor(if (savings >= 0) 0xFF4ADE80.toInt() else 0xFFF87171.toInt())
     }
@@ -192,7 +192,7 @@ class InsightsFragment : Fragment() {
             val pct = ((amount / total) * 100).toInt()
             val row = buildLegendRow(
                 cat,
-                formatRupee(amount),
+                formatAmount(amount),
                 "$pct%",
                 categoryColors[i % categoryColors.size]
             )
@@ -260,8 +260,6 @@ class InsightsFragment : Fragment() {
             .map { (cat, txns) -> cat to txns.sumOf { -it.amount } }
             .sortedByDescending { it.second }
             .take(5)
-
-        val incomeTotal = income.sumOf { it.amount }
 
         if (expenseByCategory.isEmpty()) {
             barChartView.setData(emptyList(), emptyList())
@@ -349,7 +347,7 @@ class InsightsFragment : Fragment() {
         }
 
         val tvAmount = TextView(requireContext()).apply {
-            text = formatRupee(amount)
+            text = formatAmount(amount)
             textSize = 13f
             typeface = android.graphics.Typeface.DEFAULT_BOLD
             setTextColor(color)
@@ -482,7 +480,7 @@ class InsightsFragment : Fragment() {
         infoLayout.addView(tvCat)
 
         val tvAmount = TextView(requireContext()).apply {
-            text = "- ${formatRupee(-txn.amount)}"
+            text = "- ${formatAmount(-txn.amount)}"
             textSize = 14f
             typeface = android.graphics.Typeface.DEFAULT_BOLD
             setTextColor(0xFFF87171.toInt())
@@ -502,9 +500,9 @@ class InsightsFragment : Fragment() {
         return row
     }
 
-    private val Int.sp get() = this.toFloat()
-
-    private fun formatRupee(amount: Double) = "₹${"%,.0f".format(amount)}"
+    private fun formatAmount(amount: Double): String {
+        return currencyManager.formatAmount(amount)
+    }
 
     private fun dpToPx(dp: Int) = (dp * resources.displayMetrics.density).toInt()
 }
