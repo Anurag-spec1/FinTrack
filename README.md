@@ -2,11 +2,18 @@
 
 A beautiful Android app to track your money, set goals, and stay on top of your finances.
 
-## Screenshots
+## 📱 Screenshots
 
-| Home | Insights | Goals | Settings |
-|------|----------|-------|----------|
-| Dashboard with balance | Spending charts | Goal tracking | Security & backup |
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b9e8f234-6ff6-42d1-8b13-69b0a86159e3" width="230" style="margin:0 12px;"/>
+  <img src="https://github.com/user-attachments/assets/ddf33ad4-a62b-4cc2-892e-13da0950aba0" width="230" style="margin:0 12px;"/>
+  <img src="https://github.com/user-attachments/assets/78007383-8162-4a75-bcb1-d8d24d4134bf" width="230" style="margin:0 12px;"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b77ab891-9891-4afe-a44c-caee39958173" width="230" style="margin:0 12px;"/>
+  <img src="https://github.com/user-attachments/assets/1a17ba26-05a4-4b5e-9e42-5f278935f781" width="230" style="margin:0 12px;"/>
+</p>
 
 ## Features
 
