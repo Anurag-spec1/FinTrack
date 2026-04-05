@@ -454,16 +454,33 @@
                             android:textColor="#99FFFFFF"
                             android:textSize="12sp" />
 
-                        <TextView
-                            android:id="@+id/tvGoalAmount"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="@font/dm_sans"
-                            android:text="₹6,000 of ₹10,000"
-                            android:textColor="@color/white"
-                            android:textSize="17sp"
-                            android:textStyle="bold" />
+                            android:layout_marginTop="4dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvGoalAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/dm_sans"
+                                android:text="₹0"
+                                android:textColor="@color/white"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvMonthlyTarget"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/dm_sans"
+                                android:text=" of ₹10,000"
+                                android:layout_marginStart="8dp"
+                                android:textColor="#66FFFFFF"
+                                android:textSize="13sp" />
+                        </LinearLayout>
 
                         <ProgressBar
                             android:id="@+id/progressGoal"
@@ -550,168 +567,13 @@
                 app:cardElevation="0dp">
 
                 <LinearLayout
+                    android:id="@+id/categorySpendingContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/glass_card_bg"
                     android:orientation="vertical"
-                    android:padding="18dp">
+                    android:padding="18dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="🍔  Food"
-                                android:textColor="#CCFFFFFF"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="₹1,800"
-                                android:textColor="#F87171"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
-
-                        <ProgressBar
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="5dp"
-                            android:layout_marginTop="6dp"
-                            android:progress="40"
-                            android:progressBackgroundTint="#22FFFFFF"
-                            android:progressTint="#F87171" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="⛽  Transport"
-                                android:textColor="#CCFFFFFF"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="₹2,400"
-                                android:textColor="#FBBF24"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
-
-                        <ProgressBar
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="5dp"
-                            android:layout_marginTop="6dp"
-                            android:progress="53"
-                            android:progressBackgroundTint="#22FFFFFF"
-                            android:progressTint="#FBBF24" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="💡  Bills"
-                                android:textColor="#CCFFFFFF"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="₹3,200"
-                                android:textColor="#A78BFA"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
-
-                        <ProgressBar
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="5dp"
-                            android:layout_marginTop="6dp"
-                            android:progress="71"
-                            android:progressBackgroundTint="#22FFFFFF"
-                            android:progressTint="#A78BFA" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="🛍  Shopping"
-                                android:textColor="#CCFFFFFF"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:fontFamily="@font/dm_sans"
-                                android:text="₹1,600"
-                                android:textColor="#34D399"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
-
-                        <ProgressBar
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="5dp"
-                            android:layout_marginTop="6dp"
-                            android:progress="36"
-                            android:progressBackgroundTint="#22FFFFFF"
-                            android:progressTint="#34D399" />
-                    </LinearLayout>
-
-                </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 

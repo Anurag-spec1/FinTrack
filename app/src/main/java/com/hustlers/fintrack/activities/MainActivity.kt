@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.hustlers.fintrack.activities.AddTransactionActivity
 import com.hustlers.fintrack.databinding.ActivityMainBinding
 import com.hustlers.fintrack.dataclass.NavItem
+import com.hustlers.fintrack.fragments.GoalsFragment
 import com.hustlers.fintrack.fragments.HomeFragment
 import com.hustlers.fintrack.fragments.InsightsFragment
 import com.hustlers.fintrack.fragments.TransactionsFragment
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             0 -> HomeFragment()
             1 -> TransactionsFragment()
             2 -> InsightsFragment()
-//            3 -> GoalsFragment()
+            3 -> GoalsFragment()
             else -> HomeFragment()
         }
         loadFragment(fragment, index)
@@ -90,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     startActivity(Intent(this, AddTransactionActivity::class.java))
     }
 
-    private fun selectTab(index: Int) {
+    fun selectTab(index: Int) {
         navItems.forEachIndexed { i, item ->
             val isSelected = i == index
             animateNavItem(item, isSelected)

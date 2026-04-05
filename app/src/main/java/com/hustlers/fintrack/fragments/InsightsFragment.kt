@@ -89,7 +89,7 @@ class InsightsFragment : Fragment() {
     }
 
     private fun setupPeriodChips() {
-        selectChip(chipMonth)    // default
+        selectChip(chipMonth)
         chipWeek.setOnClickListener {
             currentPeriod = Period.WEEK; selectChip(chipWeek); applyPeriodFilter()
         }
@@ -160,7 +160,7 @@ class InsightsFragment : Fragment() {
         tvTotalIncome.text = formatRupee(income)
         tvTotalExpenses.text = formatRupee(expenses)
         tvNetSavings.text = formatRupee(savings)
-        tvSavingsRate.text = "$rate% saved"
+        tvSavingsRate.text = "$rate%"
         tvNetSavings.setTextColor(if (savings >= 0) 0xFF4ADE80.toInt() else 0xFFF87171.toInt())
     }
 

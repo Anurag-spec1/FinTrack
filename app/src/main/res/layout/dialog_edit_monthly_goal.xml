@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="@font/dm_sans"
+        android:text="Edit Monthly Goal"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/dm_sans"
+        android:text="Set how much you want to save this month"
+        android:textColor="#66FFFFFF"
+        android:textSize="12sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:fontFamily="@font/dm_sans"
+        android:letterSpacing="0.06"
+        android:text="Target Amount (₹)"
+        android:textColor="#66FFFFFF"
+        android:textSize="11sp" />
+
+    <EditText
+        android:id="@+id/etMonthlyTarget"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/input_field_bg"
+        android:fontFamily="@font/dm_sans"
+        android:hint="10000"
+        android:inputType="numberDecimal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="#44FFFFFF"
+        android:textSize="14sp" />
+
+</LinearLayout>

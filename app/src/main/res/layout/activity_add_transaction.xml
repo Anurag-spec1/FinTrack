@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
+    android:fitsSystemWindows="true"
     android:fillViewport="true"
     android:overScrollMode="never"
     android:scrollbars="none">
@@ -17,9 +18,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingTop="52dp"
-            android:paddingEnd="20dp"
+            android:paddingHorizontal="20dp"
             android:paddingBottom="20dp">
 
             <TextView
@@ -29,10 +28,10 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:fontFamily="@font/dm_sans"
-                android:padding="4dp"
+                android:padding="8dp"
                 android:text="← Back"
                 android:textColor="#60A5FA"
-                android:textSize="14sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -41,7 +40,7 @@
                 android:fontFamily="@font/dm_sans"
                 android:text="Add Transaction"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -90,11 +89,11 @@
                     android:fontFamily="@font/dm_sans"
                     android:gravity="center"
                     android:hint="0"
-                    android:textColorHint="#33F87171"
                     android:inputType="numberDecimal"
                     android:maxLines="1"
                     android:minWidth="60dp"
                     android:textColor="@color/white"
+                    android:textColorHint="#33FFFFFF"
                     android:textSize="44sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -156,7 +155,7 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#00000000"
+                    app:cardBackgroundColor="#FF4ADE80"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp">
 
@@ -222,12 +221,12 @@
                     android:background="@drawable/input_field_bg"
                     android:fontFamily="@font/dm_sans"
                     android:hint="e.g. Zomato Order, Salary..."
-                    android:textColorHint="#44FFFFFF"
                     android:inputType="textCapSentences"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
                     android:singleLine="true"
                     android:textColor="@color/white"
+                    android:textColorHint="#44FFFFFF"
                     android:textSize="14sp" />
 
                 <View
@@ -243,7 +242,7 @@
                     android:layout_marginBottom="6dp"
                     android:fontFamily="@font/dm_sans"
                     android:letterSpacing="0.06"
-                    android:text="Note  (optional)"
+                    android:text="Note (optional)"
                     android:textColor="#66FFFFFF"
                     android:textSize="11sp" />
 
@@ -254,12 +253,12 @@
                     android:background="@drawable/input_field_bg"
                     android:fontFamily="@font/dm_sans"
                     android:hint="Add a short note..."
-                    android:textColorHint="#44FFFFFF"
                     android:inputType="textCapSentences"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
                     android:singleLine="true"
                     android:textColor="@color/white"
+                    android:textColorHint="#44FFFFFF"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -306,28 +305,24 @@
             android:layout_height="56dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
             app:cardBackgroundColor="#00000000"
             app:cardCornerRadius="18dp"
             app:cardElevation="0dp">
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/add_btn_bg">
+                android:background="@drawable/add_btn_bg"
+                android:fontFamily="@font/dm_sans"
+                android:gravity="center"
+                android:letterSpacing="0.04"
+                android:text="Save Transaction"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/btnSave"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/dm_sans"
-                    android:gravity="center"
-                    android:letterSpacing="0.04"
-                    android:text="Save Transaction"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
     </LinearLayout>
