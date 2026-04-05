@@ -219,7 +219,7 @@ class AddTransactionActivity : AppCompatActivity() {
             }
 
             val finalAmount = if (isIncome) rawAmount else -rawAmount
-            val dateStr = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date())
+            val dateStr = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault()).format(Date())
             val note = etNote.text.toString().trim()
             val displayTitle = if (note.isNotEmpty()) title else title
 

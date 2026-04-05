@@ -16,6 +16,7 @@ import com.hustlers.fintrack.activities.AddTransactionActivity
 import com.hustlers.fintrack.databinding.ActivityMainBinding
 import com.hustlers.fintrack.dataclass.NavItem
 import com.hustlers.fintrack.fragments.HomeFragment
+import com.hustlers.fintrack.fragments.InsightsFragment
 import com.hustlers.fintrack.fragments.TransactionsFragment
 
 class MainActivity : AppCompatActivity() {
@@ -36,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
         setupNavBar()
 
-        // Load default fragment if this is a fresh start
         if (savedInstanceState == null) {
             loadFragment(HomeFragment(), 0)
         }
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         val fragment = when (index) {
             0 -> HomeFragment()
             1 -> TransactionsFragment()
-//            2 -> InsightsFragment()
+            2 -> InsightsFragment()
 //            3 -> GoalsFragment()
             else -> HomeFragment()
         }

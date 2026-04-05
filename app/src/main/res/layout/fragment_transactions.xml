@@ -358,7 +358,7 @@
         android:clipToPadding="false"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:paddingBottom="90dp">
+        android:paddingBottom="10dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTransactions"
