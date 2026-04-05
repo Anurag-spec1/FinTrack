@@ -2,6 +2,10 @@
 
 A beautiful Android app to track your money, set goals, and stay on top of your finances.
 
+## ⬇️ Download APK
+
+[Download FinTrack APK](https://github.com/Anurag-spec1/FinTrack/releases/download/v1.0/app-release.apk)
+
 ## 📱 Screenshots
 
 <p align="center">
