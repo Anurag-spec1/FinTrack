@@ -138,7 +138,7 @@ Download the APK and install. No special permissions needed except:
 
 ## Known Issues
 
-None. App is stable and production ready.
+No known issues — the app is stable and production-ready.
 
 ## Support
 
