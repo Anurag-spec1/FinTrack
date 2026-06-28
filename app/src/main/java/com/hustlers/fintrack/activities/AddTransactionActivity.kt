@@ -1,8 +1,10 @@
 package com.hustlers.fintrack.activities
 
 import android.os.Bundle
-import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.hustlers.fintrack.R
@@ -33,7 +35,7 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private var isIncome = false
     private var selectedCategory = ""
-    private var selectedIcon = "💳"
+    private var selectedIcon = DEFAULT_ICON
 
     private val expenseCategories = listOf(
         "🍔" to "Food",
@@ -56,6 +58,10 @@ class AddTransactionActivity : AppCompatActivity() {
         "💡" to "Bonus",
         "📦" to "Other"
     )
+
+    companion object {
+        private const val DEFAULT_ICON = "💳"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,7 +91,7 @@ class AddTransactionActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSave)
 
         // Show current currency symbol as hint
-        etAmount.hint = "${currencyManager.currentCurrency.symbol} 0"
+        updateAmountHint()
     }
 
     private fun setupTypeToggle() {
@@ -107,7 +113,7 @@ class AddTransactionActivity : AppCompatActivity() {
         setupCategoryChips(incomeCategories)
 
         etAmount.setHintTextColor(0x664ADE80.toInt())
-        etAmount.hint = "${currencyManager.currentCurrency.symbol} 0"
+        updateAmountHint()
     }
 
     private fun selectExpense() {
@@ -122,13 +128,13 @@ class AddTransactionActivity : AppCompatActivity() {
         setupCategoryChips(expenseCategories)
 
         etAmount.setHintTextColor(0x66F87171.toInt())
-        etAmount.hint = "${currencyManager.currentCurrency.symbol} 0"
+        updateAmountHint()
     }
 
     private fun setupCategoryChips(categories: List<Pair<String, String>>) {
         categoryContainer.removeAllViews()
         selectedCategory = ""
-        selectedIcon = "💳"
+        selectedIcon = DEFAULT_ICON
 
         var rowLayout: LinearLayout? = null
 
@@ -238,6 +244,10 @@ class AddTransactionActivity : AppCompatActivity() {
             Toast.makeText(this, "✓ Transaction saved!", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    private fun updateAmountHint() {
+        etAmount.hint = "${currencyManager.currentCurrency.symbol} 0"
     }
 
     private fun dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
