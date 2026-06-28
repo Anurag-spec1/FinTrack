@@ -25,6 +25,15 @@ import com.hustlers.fintrack.fragments.InsightsFragment
 import com.hustlers.fintrack.fragments.TransactionsFragment
 import com.hustlers.fintrack.utils.BiometricLockManager
 
+/**
+ * MainActivity hosts the primary navigation for the FinTrack app:
+ * - Home (summary)
+ * - Transactions
+ * - Insights
+ * - Goals
+ *
+ * This activity also coordinates biometric locking and the add-transaction flow.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
