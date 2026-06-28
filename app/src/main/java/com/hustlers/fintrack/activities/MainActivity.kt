@@ -42,12 +42,21 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private var isUnlocked = false
+        // Intent extra key for when the activity is started after unlocking
+        private const val EXTRA_FROM_UNLOCK = "from_unlock"
+        // Delay before checking biometric lock again when returning to the activity (ms)
+        private const val LOCK_DELAY_MS = 100L
+        // Semi-transparent white used for inactive icons/labels
+        private val SEMI_TRANSPARENT_WHITE = Color.parseColor("#99FFFFFF")
+        // Animation durations (ms)
+        private const val NAV_SCALE_DURATION = 250L
+        private const val NAV_ALPHA_DURATION = 200L
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val fromUnlock = intent.getBooleanExtra("from_unlock", false)
+        val fromUnlock = intent.getBooleanExtra(EXTRA_FROM_UNLOCK, false)
 
         if (fromUnlock) {
             isUnlocked = true
@@ -84,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, LockActivity::class.java))
                 finish()
             }
-        }, 100)
+        }, LOCK_DELAY_MS)
     }
 
     override fun onPause() {
@@ -159,15 +168,15 @@ class MainActivity : AppCompatActivity() {
 
         AnimatorSet().apply {
             playTogether(scaleX, scaleY)
-            duration = 250
+            duration = NAV_SCALE_DURATION
             interpolator = OvershootInterpolator(1.5f)
             start()
         }
 
-        item.icon.animate().alpha(targetAlpha).setDuration(200).start()
-        item.label.animate().alpha(targetAlpha).setDuration(200).start()
+        item.icon.animate().alpha(targetAlpha).setDuration(NAV_ALPHA_DURATION).start()
+        item.label.animate().alpha(targetAlpha).setDuration(NAV_ALPHA_DURATION).start()
 
-        val tintColor = if (selected) Color.WHITE else Color.parseColor("#99FFFFFF")
+        val tintColor = if (selected) Color.WHITE else SEMI_TRANSPARENT_WHITE
         item.icon.imageTintList = ColorStateList.valueOf(tintColor)
         item.label.setTextColor(tintColor)
         item.label.setTypeface(null, if (selected) Typeface.BOLD else Typeface.NORMAL)
